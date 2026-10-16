@@ -1,0 +1,25 @@
+{
+	"schemaVersion": 1,
+	"id": "${id}",
+	"version": "${version}",
+	"name": "${name}",
+	"description": "It snows in every biome. Based on Eternal Winter by ichttt.",
+	"authors": ["traelmyx"],
+	"contributors": ["ichttt (original mod)"],
+	"contact": {
+		"sources": "https://github.com/traelmyx/eternal-winter-reborn",
+		"issues": "https://github.com/traelmyx/eternal-winter-reborn/issues"
+	},
+	"license": "GPL-3.0",
+	"icon": "assets/eternalwinter/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": ["ichttt.mods.eternalwinter.fabric.EternalWinterFabric"]
+	},
+	"depends": {
+		"fabricloader": ">=0.16.0",
+		"fabric-api": "*",
+		"minecraft": "${mc_dep}",
+		"java": ">=${java}"
+	}
+}

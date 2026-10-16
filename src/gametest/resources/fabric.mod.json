@@ -1,0 +1,14 @@
+{
+	"schemaVersion": 1,
+	"id": "${id}_gametest",
+	"version": "${version}",
+	"name": "Eternal Winter GameTests",
+	"environment": "*",
+	"entrypoints": {
+		"fabric-gametest": ["ichttt.mods.eternalwinter.test.fabric.FabricGameTests"],
+		"client": ["ichttt.mods.eternalwinter.test.fabric.FabricClientSmoke"]
+	},
+	"depends": {
+		"${id}": "*"
+	}
+}
