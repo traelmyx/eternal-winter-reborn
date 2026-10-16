@@ -9,7 +9,7 @@ displayName = "Eternal Winter GameTests"
 
 [[dependencies.${id}_gametest]]
 modId = "${id}"
-type = "required"
+type = "optional"
 versionRange = "*"
 ordering = "AFTER"
 side = "BOTH"
