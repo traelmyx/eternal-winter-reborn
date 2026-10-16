@@ -159,3 +159,37 @@ publishing {
 		create('mavenJava', MavenPublication) { from components.java }
 	}
 }
+
+// Multiplayer probe (see .github/workflows/build.yml): a tiny client mod that joins localhost and reports the weather it sees
+sourceSets {
+	probe {
+		compileClasspath += sourceSets.main.compileClasspath
+	}
+}
+def probeJar = tasks.register('probeJar', Jar) {
+	from sourceSets.probe.output
+	archiveClassifier = obf ? 'probe-dev' : 'probe'
+}
+def probeModJar = probeJar
+if (obf) {
+	probeModJar = tasks.register('remapProbeJar', net.fabricmc.loom.task.RemapJarTask) {
+		inputFile = probeJar.flatMap { it.archiveFile }
+		archiveClassifier = 'probe'
+		addNestedDependencies = false
+	}
+}
+['Modded', 'Vanilla'].each { kind ->
+	tasks.register("runProbe${kind}", net.fabricmc.loom.task.prod.ClientProductionRunTask) {
+		group = 'verification'
+		if (kind == 'Vanilla') {
+			// only Fabric API and the probe: this client does not have Eternal Winter
+			mods.setFrom(probeModJar, project.configurations.productionRuntimeMods)
+		} else {
+			mods.from(probeModJar)
+		}
+		jvmArgs.add("-Dprobe=${kind.toLowerCase()}".toString())
+		jvmArgs.add('-Xmx2G')
+		runDir = layout.buildDirectory.dir("run/probe${kind}")
+		javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(javaVersion) }
+	}
+}

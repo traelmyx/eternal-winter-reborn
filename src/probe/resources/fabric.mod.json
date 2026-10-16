@@ -1,0 +1,13 @@
+{
+	"schemaVersion": 1,
+	"id": "eternalwinter_probe",
+	"version": "1",
+	"name": "Eternal Winter multiplayer probe",
+	"environment": "client",
+	"entrypoints": {
+		"client": ["ichttt.mods.eternalwinter.probe.FabricMultiplayerProbe"]
+	},
+	"depends": {
+		"fabric-api": "*"
+	}
+}
