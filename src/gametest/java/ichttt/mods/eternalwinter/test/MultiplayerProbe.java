@@ -39,7 +39,20 @@ public final class MultiplayerProbe {
         return true;
     }
 
+    private static int waited;
+    private static boolean connecting;
+
     public static void tick(Minecraft mc) {
+        if (!connecting) {
+            // once the title screen is up, join the server like clicking Direct Connect
+            if (mc.screen != null && mc.getOverlay() == null && ++waited >= 40) {
+                connecting = true;
+                var address = net.minecraft.client.multiplayer.resolver.ServerAddress.parseString("localhost:25565");
+                var data = new net.minecraft.client.multiplayer.ServerData("probe", "localhost:25565", net.minecraft.client.multiplayer.ServerData.Type.OTHER);
+                net.minecraft.client.gui.screens.ConnectScreen.startConnecting(mc.screen, mc, address, data, false, null);
+            }
+            return;
+        }
         if (done || mc.level == null || mc.player == null || mc.hasSingleplayerServer()) return;
         if (++ticks == 40) {
             mc.player.setXRot(-20);

@@ -47,14 +47,12 @@ neoForge {
 			client()
 			gameDirectory = project.file('build/run/probeModded')
 			systemProperty 'probe', 'modded'
-			programArguments.addAll('--quickPlayMultiplayer', 'localhost:25565')
 			jvmArguments.set(['-Xmx2G'])
 		}
 		probeVanilla {
 			client()
 			gameDirectory = project.file('build/run/probeVanilla')
 			systemProperty 'probe', 'vanilla'
-			programArguments.addAll('--quickPlayMultiplayer', 'localhost:25565')
 			jvmArguments.set(['-Xmx2G'])
 			loadedMods = [mods.getByName("${modId}_gametest".toString())]
 		}

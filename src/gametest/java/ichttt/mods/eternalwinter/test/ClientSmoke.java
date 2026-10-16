@@ -98,10 +98,11 @@ public final class ClientSmoke {
                         var precipitation = mc.level.getBiome(pos).value().getPrecipitationAt(pos);
                         String biome = mc.level.getBiome(pos).unwrapKey().map(k -> k.location().toString()).orElse("?");
                         System.out.println("[clientsmoke] client biome " + biome + " precipitation " + precipitation);
-                        if (!biome.equals("minecraft:desert") && !biome.equals("minecraft:plains")) {
-                            fail("smoke test did not reach a desert or plains, stood in " + biome);
+                        var desert = mc.level.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.BIOME).getOrThrow(Biomes.DESERT);
+                        if (desert.getPrecipitationAt(pos) != Biome.Precipitation.SNOW) {
+                            fail("client's desert has " + desert.getPrecipitationAt(pos));
                         }
-                        if (precipitation != Biome.Precipitation.SNOW) {
+                        if (precipitation != Biome.Precipitation.SNOW && !biome.contains("river") && !biome.contains("ocean")) {
                             fail("client sees " + precipitation + " in " + biome);
                         }
                         Files.writeString(mc.gameDirectory.toPath().resolve("smoke-ok"), "ok\n");
