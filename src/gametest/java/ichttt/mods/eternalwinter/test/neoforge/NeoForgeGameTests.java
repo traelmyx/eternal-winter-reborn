@@ -22,9 +22,6 @@ public class NeoForgeGameTests {
         if (dist.isClient() && ClientSmoke.start()) {
             NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post e) -> ClientSmoke.tick(net.minecraft.client.Minecraft.getInstance()));
         }
-        if (dist.isClient() && ichttt.mods.eternalwinter.test.MultiplayerProbe.start()) {
-            NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post e) -> ichttt.mods.eternalwinter.test.MultiplayerProbe.tick(net.minecraft.client.Minecraft.getInstance()));
-        }
     }
 
     @GameTest(template = "empty")

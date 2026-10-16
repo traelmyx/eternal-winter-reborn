@@ -1,0 +1,8 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
+license = "GPL-3.0"
+
+[[mods]]
+modId = "eternalwinter_probe"
+version = "1"
+displayName = "Eternal Winter multiplayer probe"

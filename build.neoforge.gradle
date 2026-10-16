@@ -10,9 +10,12 @@ group = project.property('mod.group')
 base.archivesName = modId
 
 sourceSets {
+	// a client-side helper mod that is NOT built against this mod, so a client can join without it (multiplayer probe)
+	probe {}
 	gametest {
 		compileClasspath += sourceSets.main.output
 		runtimeClasspath += sourceSets.main.output
+		runtimeClasspath += sourceSets.probe.output
 	}
 }
 configurations {
@@ -26,10 +29,12 @@ neoForge {
 		disableRecompilation = true
 	}
 	addModdingDependenciesTo sourceSets.gametest
+	addModdingDependenciesTo sourceSets.probe
 
 	mods {
 		"${modId}" { sourceSet sourceSets.main }
 		"${modId}_gametest" { sourceSet sourceSets.gametest }
+		"${modId}_probe" { sourceSet sourceSets.probe }
 	}
 
 	runs {
@@ -47,6 +52,7 @@ neoForge {
 			client()
 			gameDirectory = project.file('build/run/probeModded')
 			systemProperty 'probe', 'modded'
+			loadedMods = [mods.getByName(modId), mods.getByName("${modId}_probe".toString())]
 			jvmArguments.set(['-Xmx2G'])
 		}
 		probeVanilla {
@@ -54,7 +60,8 @@ neoForge {
 			gameDirectory = project.file('build/run/probeVanilla')
 			systemProperty 'probe', 'vanilla'
 			jvmArguments.set(['-Xmx2G'])
-			loadedMods = [mods.getByName("${modId}_gametest".toString())]
+			sourceSet = sourceSets.probe
+			loadedMods = [mods.getByName("${modId}_probe".toString())]
 		}
 		clientSmoke {
 			client()

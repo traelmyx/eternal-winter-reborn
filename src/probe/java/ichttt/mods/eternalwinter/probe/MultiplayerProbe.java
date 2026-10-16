@@ -1,4 +1,4 @@
-package ichttt.mods.eternalwinter.test;
+package ichttt.mods.eternalwinter.probe;
 
 //? if neoforge {
 
@@ -16,13 +16,17 @@ import java.util.List;
 
 // Run with -Dprobe=<name> and --quickPlayMultiplayer: after joining a dedicated server, writes what the client thinks the
 // weather in a few warm biomes is (the client renders precipitation from its own copy of the biome) to probe-<name>.txt.
+@net.neoforged.fml.common.Mod("eternalwinter_probe")
 public final class MultiplayerProbe {
+    public MultiplayerProbe(net.neoforged.api.distmarker.Dist dist) {
+        if (dist.isClient() && start()) {
+            net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.ClientTickEvent.Post e) -> tick(Minecraft.getInstance()));
+        }
+    }
+
     private static final String NAME = System.getProperty("probe", "");
     private static int ticks;
     private static boolean done;
-
-    private MultiplayerProbe() {
-    }
 
     public static boolean start() {
         if (NAME.isEmpty()) return false;
