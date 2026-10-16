@@ -13,6 +13,8 @@ import net.minecraft.world.level.levelgen.WorldOptions;
 import net.minecraft.world.level.levelgen.presets.WorldPresets;
 
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.levelgen.Heightmap;
 
 import java.nio.file.Files;
 
@@ -67,15 +69,25 @@ public final class ClientSmoke {
                 case 2 -> {
                     ticks++;
                     if (ticks == 40) {
+                        // go somewhere that never sees snow in vanilla: a desert, or plains if there is none nearby
                         var server = mc.getSingleplayerServer();
                         server.execute(() -> {
+                            var player = server.getPlayerList().getPlayers().get(0);
+                            var level = player.serverLevel();
+                            var found = level.findClosestBiome3d(b -> b.is(Biomes.DESERT), player.blockPosition(), 4000, 32, 64);
+                            if (found == null) found = level.findClosestBiome3d(b -> b.is(Biomes.PLAINS), player.blockPosition(), 4000, 32, 64);
+                            if (found != null) {
+                                var at = found.getFirst();
+                                level.getChunk(at);
+                                int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING, at.getX(), at.getZ());
+                                player.teleportTo(level, at.getX() + 0.5, y + 1, at.getZ() + 0.5, 0, 10);
+                            }
                             server.getCommands().performPrefixedCommand(server.createCommandSourceStack(), "time set 3000");
                             server.getCommands().performPrefixedCommand(server.createCommandSourceStack(), "weather rain 6000");
                         });
                     }
                     if (ticks == 60) {
                         mc.options.hideGui = true;
-                        mc.player.setXRot(10);
                     }
                     if (ticks == 400) {
                         Screenshot.grab(mc.gameDirectory, "snowfall.png", mc.getMainRenderTarget(), msg -> {});
@@ -86,7 +98,10 @@ public final class ClientSmoke {
                         var precipitation = mc.level.getBiome(pos).value().getPrecipitationAt(pos);
                         String biome = mc.level.getBiome(pos).unwrapKey().map(k -> k.location().toString()).orElse("?");
                         System.out.println("[clientsmoke] client biome " + biome + " precipitation " + precipitation);
-                        if (precipitation != Biome.Precipitation.SNOW && !biome.contains("river") && !biome.contains("ocean")) {
+                        if (!biome.equals("minecraft:desert") && !biome.equals("minecraft:plains")) {
+                            fail("smoke test did not reach a desert or plains, stood in " + biome);
+                        }
+                        if (precipitation != Biome.Precipitation.SNOW) {
                             fail("client sees " + precipitation + " in " + biome);
                         }
                         Files.writeString(mc.gameDirectory.toPath().resolve("smoke-ok"), "ok\n");
