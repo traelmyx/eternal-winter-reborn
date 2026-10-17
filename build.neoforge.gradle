@@ -19,6 +19,14 @@ sourceSets {
 		if (stonecutter.current.version == '1.21.1') runtimeClasspath += sourceSets.probe.output
 	}
 }
+// the multiplayer probe (client side, see the workflow) is only built and run on the 1.21.1 node
+if (stonecutter.current.version != '1.21.1') {
+	afterEvaluate {
+		sourceSets.probe.java.setSrcDirs([])
+		sourceSets.probe.resources.setSrcDirs([])
+	}
+}
+
 configurations {
 	gametestImplementation.extendsFrom implementation
 	gametestRuntimeOnly.extendsFrom runtimeOnly
