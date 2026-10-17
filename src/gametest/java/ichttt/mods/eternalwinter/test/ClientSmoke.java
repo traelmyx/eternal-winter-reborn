@@ -1,15 +1,9 @@
 package ichttt.mods.eternalwinter.test;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.Screenshot;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.world.Difficulty;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameType;
-import net.minecraft.world.level.LevelSettings;
-import net.minecraft.world.level.WorldDataConfiguration;
-import net.minecraft.world.level.levelgen.WorldOptions;
 import net.minecraft.world.level.levelgen.presets.WorldPresets;
 
 import net.minecraft.world.level.biome.Biome;
@@ -50,19 +44,19 @@ public final class ClientSmoke {
         try {
             switch (stage) {
                 case 0 -> {
-                    Screen screen = mc.screen;
-                    if (screen != null && mc.getOverlay() == null && ++ticks >= 20) {
+                    Screen screen = SmokeCompat.screen(mc);
+                    if (screen != null && SmokeCompat.overlayHidden(mc) && ++ticks >= 20) {
                         if (screen.getClass().getSimpleName().equals("LoadingErrorScreen")) {
                             fail("mod loading errors");
                         }
                         ticks = 0;
                         mc.options.tutorialStep = net.minecraft.client.tutorial.TutorialSteps.NONE;
-                        createWorld(mc);
+                        SmokeCompat.createWorld(mc, GameType.SURVIVAL, WorldPresets.NORMAL, 20261016L, true);
                         stage = 1;
                     }
                 }
                 case 1 -> {
-                    if (mc.level != null && mc.player != null && mc.screen == null) {
+                    if (mc.level != null && mc.player != null && SmokeCompat.screen(mc) == null) {
                         stage = 2;
                     }
                 }
@@ -80,7 +74,7 @@ public final class ClientSmoke {
                                 var at = found.getFirst();
                                 level.getChunk(at);
                                 int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING, at.getX(), at.getZ());
-                                player.teleportTo(level, at.getX() + 0.5, y + 1, at.getZ() + 0.5, 0, 10);
+                                server.getCommands().performPrefixedCommand(server.createCommandSourceStack(), String.format(java.util.Locale.ROOT, "tp %s %.1f %d %.1f 0 10", player.getStringUUID(), at.getX() + 0.5, y + 1, at.getZ() + 0.5));
                             }
                             server.getCommands().performPrefixedCommand(server.createCommandSourceStack(), "time set 3000");
                             server.getCommands().performPrefixedCommand(server.createCommandSourceStack(), "weather rain 6000");
@@ -90,7 +84,7 @@ public final class ClientSmoke {
                         mc.options.hideGui = true;
                     }
                     if (ticks == 400) {
-                        Screenshot.grab(mc.gameDirectory, "snowfall.png", mc.getMainRenderTarget(), msg -> {});
+                        SmokeCompat.screenshot(mc, "snowfall.png");
                         mc.options.hideGui = false;
                     }
                     if (ticks >= 420) {
@@ -117,13 +111,6 @@ public final class ClientSmoke {
             t.printStackTrace();
             fail(t.toString());
         }
-    }
-
-    private static void createWorld(Minecraft mc) {
-        LevelSettings settings = new LevelSettings("smoke", GameType.SURVIVAL, false, Difficulty.PEACEFUL, true, new GameRules(), WorldDataConfiguration.DEFAULT);
-        mc.createWorldOpenFlows().createFreshLevel("smoke", settings, new WorldOptions(20261016L, true, false),
-            registries -> registries.registryOrThrow(Registries.WORLD_PRESET).getHolderOrThrow(WorldPresets.NORMAL).value().createWorldDimensions(),
-            mc.screen);
     }
 
     public static void fail(String why) {

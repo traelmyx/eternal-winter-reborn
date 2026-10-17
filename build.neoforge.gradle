@@ -15,7 +15,8 @@ sourceSets {
 	gametest {
 		compileClasspath += sourceSets.main.output
 		runtimeClasspath += sourceSets.main.output
-		runtimeClasspath += sourceSets.probe.output
+		// the multiplayer probe runs on the 1.21.1 node only
+		if (stonecutter.current.version == '1.21.1') runtimeClasspath += sourceSets.probe.output
 	}
 }
 configurations {
