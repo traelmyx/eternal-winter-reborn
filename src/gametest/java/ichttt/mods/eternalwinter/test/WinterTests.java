@@ -15,7 +15,15 @@ public final class WinterTests {
     }
 
     private static Biome biome(GameTestHelper helper, ResourceKey<Biome> key) {
-        return helper.getLevel().registryAccess().registryOrThrow(Registries.BIOME).getOrThrow(key);
+        return biome(helper.getLevel().registryAccess(), key);
+    }
+
+    public static Biome biome(net.minecraft.core.RegistryAccess registries, ResourceKey<Biome> key) {
+        //? if >=1.21.11 {
+        /*return registries.lookupOrThrow(Registries.BIOME).getValueOrThrow(key);
+        *///?} else {
+        return registries.registryOrThrow(Registries.BIOME).getOrThrow(key);
+        //?}
     }
 
     public static void warmBiomesSnow(GameTestHelper helper) {

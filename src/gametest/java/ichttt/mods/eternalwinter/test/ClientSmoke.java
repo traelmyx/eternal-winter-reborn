@@ -92,7 +92,7 @@ public final class ClientSmoke {
                         var precipitation = mc.level.getBiome(pos).value().getPrecipitationAt(pos);
                         String biome = mc.level.getBiome(pos).unwrapKey().map(k -> k.location().toString()).orElse("?");
                         System.out.println("[clientsmoke] client biome " + biome + " precipitation " + precipitation);
-                        var desert = mc.level.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.BIOME).getOrThrow(Biomes.DESERT);
+                        var desert = WinterTests.biome(mc.level.registryAccess(), Biomes.DESERT);
                         if (desert.getPrecipitationAt(pos) != Biome.Precipitation.SNOW) {
                             fail("client's desert has " + desert.getPrecipitationAt(pos));
                         }
