@@ -28,7 +28,11 @@ public class EternalWinterNeoForge {
 
     public static class BiomesModifier implements BiomeModifier {
         @Override
+        //? if >=26 {
+        /*public void modify(net.minecraft.core.RegistryAccess registries, Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
+        *///?} else {
         public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
+        //?}
             if (phase != Phase.MODIFY || biome.unwrapKey().isEmpty() || !EternalWinter.affects(biome.unwrapKey().get())) {
                 return;
             }

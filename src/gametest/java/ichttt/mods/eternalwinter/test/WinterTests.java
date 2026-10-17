@@ -18,6 +18,14 @@ public final class WinterTests {
         return biome(helper.getLevel().registryAccess(), key);
     }
 
+    public static Biome.Precipitation precipitation(Biome biome, net.minecraft.core.BlockPos pos) {
+        //? if >=1.21.2 {
+        /*return biome.getPrecipitationAt(pos, 63);
+        *///?} else {
+        return biome.getPrecipitationAt(pos);
+        //?}
+    }
+
     public static Biome biome(net.minecraft.core.RegistryAccess registries, ResourceKey<Biome> key) {
         //? if >=1.21.11 {
         /*return registries.lookupOrThrow(Registries.BIOME).getValueOrThrow(key);
@@ -30,7 +38,7 @@ public final class WinterTests {
         BlockPos pos = helper.absolutePos(new BlockPos(1, 2, 1));
         for (ResourceKey<Biome> key : List.of(Biomes.PLAINS, Biomes.DESERT, Biomes.JUNGLE, Biomes.SAVANNA, Biomes.BADLANDS, Biomes.FOREST)) {
             Biome biome = biome(helper, key);
-            helper.assertTrue(biome.getPrecipitationAt(pos) == Biome.Precipitation.SNOW, key.location() + " precipitation is " + biome.getPrecipitationAt(pos));
+            helper.assertTrue(precipitation(biome, pos) == Biome.Precipitation.SNOW, ichttt.mods.eternalwinter.EternalWinter.id(key) + " precipitation is " + precipitation(biome, pos));
         }
         helper.succeed();
     }
@@ -39,7 +47,7 @@ public final class WinterTests {
         BlockPos pos = helper.absolutePos(new BlockPos(1, 2, 1));
         for (ResourceKey<Biome> key : List.of(Biomes.RIVER, Biomes.WARM_OCEAN, Biomes.OCEAN)) {
             Biome biome = biome(helper, key);
-            helper.assertTrue(biome.getPrecipitationAt(pos) == Biome.Precipitation.RAIN, key.location() + " precipitation is " + biome.getPrecipitationAt(pos));
+            helper.assertTrue(precipitation(biome, pos) == Biome.Precipitation.RAIN, ichttt.mods.eternalwinter.EternalWinter.id(key) + " precipitation is " + precipitation(biome, pos));
         }
         helper.succeed();
     }

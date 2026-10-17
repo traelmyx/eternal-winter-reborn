@@ -67,7 +67,7 @@ public final class ClientSmoke {
                         var server = mc.getSingleplayerServer();
                         server.execute(() -> {
                             var player = server.getPlayerList().getPlayers().get(0);
-                            var level = player.serverLevel();
+                            var level = (net.minecraft.server.level.ServerLevel) player.level();
                             var found = level.findClosestBiome3d(b -> b.is(Biomes.DESERT), player.blockPosition(), 4000, 32, 64);
                             if (found == null) found = level.findClosestBiome3d(b -> b.is(Biomes.PLAINS), player.blockPosition(), 4000, 32, 64);
                             if (found != null) {
@@ -81,20 +81,20 @@ public final class ClientSmoke {
                         });
                     }
                     if (ticks == 60) {
-                        mc.options.hideGui = true;
+                        SmokeCompat.hideGui(mc, true);
                     }
                     if (ticks == 400) {
                         SmokeCompat.screenshot(mc, "snowfall.png");
-                        mc.options.hideGui = false;
+                        SmokeCompat.hideGui(mc, false);
                     }
                     if (ticks >= 420) {
                         var pos = mc.player.blockPosition();
-                        var precipitation = mc.level.getBiome(pos).value().getPrecipitationAt(pos);
-                        String biome = mc.level.getBiome(pos).unwrapKey().map(k -> k.location().toString()).orElse("?");
+                        var precipitation = WinterTests.precipitation(mc.level.getBiome(pos).value(), pos);
+                        String biome = mc.level.getBiome(pos).unwrapKey().map(ichttt.mods.eternalwinter.EternalWinter::id).orElse("?");
                         System.out.println("[clientsmoke] client biome " + biome + " precipitation " + precipitation);
                         var desert = WinterTests.biome(mc.level.registryAccess(), Biomes.DESERT);
-                        if (desert.getPrecipitationAt(pos) != Biome.Precipitation.SNOW) {
-                            fail("client's desert has " + desert.getPrecipitationAt(pos));
+                        if (WinterTests.precipitation(desert, pos) != Biome.Precipitation.SNOW) {
+                            fail("client's desert has " + WinterTests.precipitation(desert, pos));
                         }
                         if (precipitation != Biome.Precipitation.SNOW && !biome.contains("river") && !biome.contains("ocean")) {
                             fail("client sees " + precipitation + " in " + biome);

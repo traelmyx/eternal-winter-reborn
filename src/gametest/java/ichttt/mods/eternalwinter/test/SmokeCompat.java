@@ -70,6 +70,14 @@ public final class SmokeCompat {
         //?}
     }
 
+    public static void hideGui(Minecraft mc, boolean hide) {
+        //? if >=26 {
+        /*if (mc.gui.hud.isHidden() != hide) mc.gui.hud.toggle();
+        *///?} else {
+        mc.options.hideGui = hide;
+        //?}
+    }
+
     /** Saves a screenshot into screenshots/ (on 26.x under the game's own timestamped name). */
     public static void screenshot(Minecraft mc, String name) {
         //? if >=26 {
