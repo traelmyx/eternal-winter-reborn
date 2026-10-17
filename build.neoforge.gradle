@@ -8,6 +8,8 @@ def modId = project.property('mod.id') as String
 version = "${project.property('mod.version')}+${mc}-neoforge"
 group = project.property('mod.group')
 base.archivesName = modId
+// the multiplayer probe (client side, see the workflow) is only built and run on the 1.21.1 node
+def withProbe = stonecutter.current.version == '1.21.1'
 
 sourceSets {
 	// a client-side helper mod that is NOT built against this mod, so a client can join without it (multiplayer probe)
@@ -16,17 +18,9 @@ sourceSets {
 		compileClasspath += sourceSets.main.output
 		runtimeClasspath += sourceSets.main.output
 		// the multiplayer probe runs on the 1.21.1 node only
-		if (stonecutter.current.version == '1.21.1') runtimeClasspath += sourceSets.probe.output
+		if (withProbe) runtimeClasspath += sourceSets.probe.output
 	}
 }
-// the multiplayer probe (client side, see the workflow) is only built and run on the 1.21.1 node
-if (stonecutter.current.version != '1.21.1') {
-	afterEvaluate {
-		sourceSets.probe.java.setSrcDirs([])
-		sourceSets.probe.resources.setSrcDirs([])
-	}
-}
-
 configurations {
 	gametestImplementation.extendsFrom implementation
 	gametestRuntimeOnly.extendsFrom runtimeOnly
@@ -38,12 +32,12 @@ neoForge {
 		disableRecompilation = true
 	}
 	addModdingDependenciesTo sourceSets.gametest
-	addModdingDependenciesTo sourceSets.probe
+	if (withProbe) addModdingDependenciesTo sourceSets.probe
 
 	mods {
 		"${modId}" { sourceSet sourceSets.main }
 		"${modId}_gametest" { sourceSet sourceSets.gametest }
-		"${modId}_probe" { sourceSet sourceSets.probe }
+		if (withProbe) "${modId}_probe" { sourceSet sourceSets.probe }
 	}
 
 	runs {
@@ -57,6 +51,7 @@ neoForge {
 			systemProperty 'neoforge.enabledGameTestNamespaces', "${modId}_gametest"
 		}
 		// Join a dedicated server on localhost (see .github/workflows/build.yml) with and without this mod on the client
+		if (withProbe) {
 		probeModded {
 			client()
 			gameDirectory = project.file('build/run/probeModded')
@@ -71,6 +66,7 @@ neoForge {
 			jvmArguments.set(['-Xmx2G'])
 			sourceSet = sourceSets.probe
 			loadedMods = [mods.getByName("${modId}_probe".toString())]
+		}
 		}
 		clientSmoke {
 			client()
