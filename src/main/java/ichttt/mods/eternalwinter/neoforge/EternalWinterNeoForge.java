@@ -29,7 +29,7 @@ public class EternalWinterNeoForge {
     public static class BiomesModifier implements BiomeModifier {
         @Override
         public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
-            if (phase != Phase.MODIFY || biome.unwrapKey().isEmpty() || !EternalWinter.affects(biome.unwrapKey().get().location())) {
+            if (phase != Phase.MODIFY || biome.unwrapKey().isEmpty() || !EternalWinter.affects(biome.unwrapKey().get())) {
                 return;
             }
             var climate = builder.getClimateSettings();

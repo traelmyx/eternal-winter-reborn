@@ -2,7 +2,7 @@ package ichttt.mods.eternalwinter;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.ResourceKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,8 +56,19 @@ public final class EternalWinter {
     }
 
     /** Whether this biome gets turned to winter. */
-    public static boolean affects(ResourceLocation biome) {
-        boolean listed = config.biomeList.stream().anyMatch(s -> s.equals(biome.getPath()) || s.equals(biome.toString()));
+    /** "namespace:path" of a registry key (the id type was renamed in 1.21.11). */
+    public static String id(ResourceKey<?> key) {
+        //? if >=1.21.11 {
+        /*return key.identifier().toString();
+        *///?} else {
+        return key.location().toString();
+        //?}
+    }
+
+    public static boolean affects(ResourceKey<?> biomeKey) {
+        String biome = id(biomeKey);
+        String path = biome.substring(biome.indexOf(':') + 1);
+        boolean listed = config.biomeList.stream().anyMatch(s -> s.equals(path) || s.equals(biome));
         return config.listMode == ListMode.WHITELIST ? listed : !listed;
     }
 }
